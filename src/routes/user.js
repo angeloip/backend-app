@@ -1,28 +1,20 @@
 const { Router } = require("express");
-const {
-  register,
-  logIn,
-  accessToken,
-  forgotPassword,
-  resetPassword,
-  info,
-  update,
-  signOut,
-  googleLogin
-} = require("../controllers/user");
+const userController = require("../controllers/user");
 const { auth } = require("../middlewares/auth");
-
+const multer = require("../middlewares/multer");
+const upload = require("../middlewares/upload");
 const router = Router();
 
-router.post("/auth/register", register);
-router.post("/auth/login", logIn);
-router.post("/auth/access", accessToken);
-router.post("/auth/forgot_pass", forgotPassword);
-router.post("/auth/reset_pass", auth, resetPassword);
-router.get("/auth/user", auth, info);
-router.patch("/auth/user_update", auth, update);
-router.get("/auth/signout", signOut);
-router.post("auth/google_login", googleLogin);
+router.post("/auth/register", userController.register);
+router.post("/auth/login", userController.logIn);
+router.post("/auth/access", userController.accessToken);
+router.post("/auth/forgot_pass", userController.forgotPassword);
+router.post("/auth/reset_pass", auth, userController.resetPassword);
+router.get("/auth/user", auth, userController.info);
+router.patch("/auth/user_update", auth, userController.update);
+router.get("/auth/signout", userController.signOut);
+router.post("/auth/google_login", userController.googleLogin);
+router.post("/upload_avatar", multer, upload, userController.uploadAvatar);
 
 /* router.post("/", createUser);
 
