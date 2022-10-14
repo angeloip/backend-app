@@ -70,7 +70,8 @@ const userController = {
       console.log("token in login:", rf_token);
       res.cookie("rftoken", rf_token, {
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000
+        maxAge: 24 * 60 * 60 * 1000,
+        sameSite: "lax"
       });
 
       res.status(200).json({ msg: `Bienvenido ${user.name}` });
@@ -202,7 +203,8 @@ const userController = {
 
         res.cookie("rftoken", rf_token, {
           httpOnly: true,
-          maxAge: 24 * 60 * 60 * 1000
+          maxAge: 24 * 60 * 60 * 1000,
+          sameSite: "lax"
         });
 
         res.status(200).json({ msg: `Bienvenido ${name}` });
@@ -219,12 +221,13 @@ const userController = {
           }
         });
 
-        await newUser.save();
+        const user_data = await newUser.save();
 
-        const rf_token = refresh({ id: user._id });
+        const rf_token = refresh({ id: user_data._id });
         res.cookie("rftoken", rf_token, {
           httpOnly: true,
-          maxAge: 24 * 60 * 60 * 1000
+          maxAge: 24 * 60 * 60 * 1000,
+          sameSite: "lax"
         });
 
         res.status(200).json({ msg: `Bienvenido ${name}` });
