@@ -67,20 +67,20 @@ const userController = {
         return res.status(400).json({ msg: "Contraseña incorrecta" });
 
       const rf_token = refresh({ id: user._id });
-      res.cookie("_apprftoken", rf_token, {
+      console.log("token in login:", rf_token);
+      res.cookie("rftoken", rf_token, {
         httpOnly: true,
-        path: "/api/user/auth/access",
         maxAge: 24 * 60 * 60 * 1000
       });
 
-      res.status(200).json({ msg: "Bienvenido" });
+      res.status(200).json({ msg: `Bienvenido ${user.name}` });
     } catch (error) {
       next(error);
     }
   },
   accessToken: async (req, res, next) => {
     try {
-      const rf_token = req.cookies._apprftoken;
+      const rf_token = req.cookies.rftoken;
 
       if (!rf_token)
         return res.status(400).json({ msg: "Por favor, inicie sesión" });
@@ -170,9 +170,7 @@ const userController = {
   },
   signOut: async (req, res, next) => {
     try {
-      res.clearCookie("_appreftoken", {
-        path: "/api/user/auth/access"
-      });
+      res.clearCookie("rftoken");
 
       return res.status(200).json({ msg: "Ha cerrado sesión" });
     } catch (error) {
@@ -202,13 +200,12 @@ const userController = {
       if (user) {
         const rf_token = refresh({ id: user._id });
 
-        res.cookie("_apprftoken", rf_token, {
+        res.cookie("rftoken", rf_token, {
           httpOnly: true,
-          path: "/api/user/auth/access",
           maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.status(200).json({ msg: "Sesión iniciada con Google" });
+        res.status(200).json({ msg: `Bienvenido ${name}` });
       } else {
         const password = email + process.env.G_CLIENT_ID;
         const hashPassword = await bcrypt.hash(password, 5);
@@ -216,19 +213,21 @@ const userController = {
           name,
           email,
           password: hashPassword,
-          avatar: picture
+          avatar: {
+            url: picture,
+            public_id: ""
+          }
         });
 
         await newUser.save();
 
         const rf_token = refresh({ id: user._id });
-        res.cookie("_apprftoken", rf_token, {
+        res.cookie("rftoken", rf_token, {
           httpOnly: true,
-          path: "/api/user/auth/access",
           maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.status(200).json({ msg: "Sesión iniciada con Google" });
+        res.status(200).json({ msg: `Bienvenido ${name}` });
       }
     } catch (error) {
       next(error);
