@@ -15,6 +15,7 @@ router.patch("/auth/user_update", auth, userController.update);
 router.get("/auth/signout", userController.signOut);
 router.post("/auth/google_login", userController.googleLogin);
 router.post("/upload_avatar", multer, upload, userController.uploadAvatar);
+router.post("/auth/verify_token", userController.verifyToken);
 
 /* router.post("/", createUser);
 

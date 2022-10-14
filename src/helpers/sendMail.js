@@ -208,7 +208,7 @@ const sendEmailReset = async (to, url, text, name) => {
               <div class="wrapper">
                   <div class="card">
                       <img style="width: 250px; margin-bottom: 10px;" src="https://i.postimg.cc/Y0k85mjt/logo.png" alt="InkhaSalud">
-                      <h1 style="margin-bottom: 15px;" class="paragraph"><span style="color: #3da35f;">¡Hey!</span> ${name}</h1>
+                      <h1 style="margin-bottom: 15px;" class="paragraph"><span style="color: #3da35f;">¡Hola!</span> ${name}</h1>
                       <p class="paragraph">Por favor, haga clic en el botón de abajo para restablecer su contraseña 😄</p>
                       <a class="link" href=${url}>
                          ${text}

@@ -245,6 +245,19 @@ const userController = {
     } catch (error) {
       next(error);
     }
+  },
+  verifyToken: async (req, res, next) => {
+    try {
+      const { token } = req.body;
+      jwt.verify(rf_token, process.env.ACCESS_TOKEN, (err, user) => {
+        if (err)
+          return res.status(400).json({ msg: "El enlace ya no es válido" });
+
+        return res.status(200);
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 
