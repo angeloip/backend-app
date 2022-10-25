@@ -67,7 +67,7 @@ const userController = {
         return res.status(400).json({ msg: "Contraseña incorrecta" });
 
       const rf_token = refresh({ id: user._id });
-      console.log("token in login:", rf_token);
+
       res.cookie("rftoken", rf_token, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
