@@ -16,7 +16,9 @@ const apriori = async (text) => {
     console.error(`stderr: ${data}`);
   });
 
-  pythonProcess.on("exit", (code) => {});
+  pythonProcess.on("exit", (code) => {
+    console.log("CODE: ", code);
+  });
 
   await once(pythonProcess, "close");
 
