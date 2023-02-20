@@ -84,7 +84,9 @@ const userController = {
       const rf_token = req.cookies.rftoken;
 
       if (!rf_token)
-        return res.status(400).json({ msg: "Por favor, inicie sesión" });
+        return res
+          .status(400)
+          .json({ msg: "Por favor, inicie sesión nuevamente" });
 
       jwt.verify(rf_token, process.env.REFRESH_TOKEN, (err, user) => {
         if (err)

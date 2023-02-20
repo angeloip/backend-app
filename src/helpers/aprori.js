@@ -3,10 +3,7 @@ const { once } = require("events");
 
 const apriori = async (text) => {
   let res;
-  const pythonProcess = spawn("python", [
-    "./src/python/apriori.py",
-    JSON.stringify(text)
-  ]);
+  const pythonProcess = spawn("python", ["main.py", JSON.stringify(text)]);
 
   pythonProcess.stdout.on("data", (data) => {
     res = data.toString();
@@ -14,6 +11,7 @@ const apriori = async (text) => {
 
   pythonProcess.stderr.on("data", (data) => {
     console.error(`stderr: ${data}`);
+    res.send(JSON.stringify({ width: data.toString() }));
   });
 
   pythonProcess.on("exit", (code) => {

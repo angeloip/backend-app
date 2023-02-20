@@ -17,23 +17,4 @@ router.post("/auth/google_login", userController.googleLogin);
 router.post("/upload_avatar", multer, upload, userController.uploadAvatar);
 router.post("/auth/verify_token", userController.verifyToken);
 
-/* router.post("/", createUser);
-
-
-router.get("/", getUsers);
-
-
-router.get("/email/:email", getUserWithEmail);
-
-router.get("/:id", getUser);
-
-
-router.put("/:id", updateUser);
-
-router.delete("/:id", deleteUser);
-
-router.get("/static/:param", getUserParams);
-
-router.put("/resetpassword/:email", resetPasswordUser); */
-
 module.exports = router;
