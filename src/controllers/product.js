@@ -9,6 +9,16 @@ const productController = {
     } catch (error) {
       next(error);
     }
+  },
+  createProduct: async (req, res, next) => {
+    try {
+      console.log("lLEGÓ");
+      console.log(req.body);
+      console.log("MMSI");
+      return res.status(200).json("OK");
+    } catch (error) {
+      next(error);
+    }
   }
 };
 
