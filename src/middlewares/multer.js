@@ -18,4 +18,12 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-module.exports = upload.single("avatar");
+module.exports = upload.single("picture");
+
+/* module.exports = (req, res, next) => {
+  console.log(req.file);
+  upload.single(req.file?.fieldname);
+
+  console.log("ra");
+  next();
+}; */

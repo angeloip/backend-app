@@ -1,4 +1,5 @@
 const { apriori } = require("../helpers/aprori");
+const fs = require("fs-extra");
 
 const productController = {
   test: async (req, res, next) => {
@@ -12,9 +13,8 @@ const productController = {
   },
   createProduct: async (req, res, next) => {
     try {
-      console.log("lLEGÓ");
       console.log(req.body);
-      console.log("MMSI");
+      await fs.remove(req.file.path);
       return res.status(200).json("OK");
     } catch (error) {
       next(error);

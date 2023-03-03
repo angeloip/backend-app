@@ -1,4 +1,6 @@
-module.exports = (req, res, next) => {
+const fs = require("fs-extra");
+
+module.exports = async (req, res, next) => {
   if (typeof req.file === "undefined" || typeof req.body === "undefined")
     return res.status(400).json({ msg: "Problema al subir esta imagen" });
 
@@ -7,10 +9,12 @@ module.exports = (req, res, next) => {
     req.file.mimetype !== "image/png" &&
     req.file.mimetype !== "image/jpeg"
   ) {
-    return res.status(400).json({ msg: "Formato no soportado" });
+    await fs.remove(req.file.path);
+    return res.status(400).json({ msg: "Formato no permitido" });
   }
 
   if (req.file.size > 1024 * 1024) {
+    await fs.remove(req.file.path);
     return res
       .status(400)
       .json({ msg: "El archivo es demasiado grande (Máx.: 1 MB)" });

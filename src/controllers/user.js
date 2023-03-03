@@ -159,11 +159,11 @@ const userController = {
   },
   update: async (req, res, next) => {
     try {
-      const { name, avatar } = req.body;
+      const { name, picture } = req.body;
 
       await userSchema.findByIdAndUpdate(
         { _id: req.user.id },
-        { name, avatar }
+        { name, picture }
       );
 
       res.status(200).json({ msg: "Informacion actualizada" });
@@ -217,7 +217,7 @@ const userController = {
           name,
           email,
           password: hashPassword,
-          avatar: {
+          picture: {
             url: picture,
             public_id: ""
           }
@@ -238,7 +238,7 @@ const userController = {
       next(error);
     }
   },
-  uploadAvatar: async (req, res, next) => {
+  uploadPicture: async (req, res, next) => {
     try {
       const result = await uploadImage(req.file.path);
       await fs.remove(req.file.path);
