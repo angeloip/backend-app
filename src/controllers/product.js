@@ -28,6 +28,7 @@ const productController = {
     try {
       const { id } = req.params;
       console.log(id);
+      console.log(req.body);
       return res.status(200).json("UPDATE");
     } catch (error) {
       next(error);
