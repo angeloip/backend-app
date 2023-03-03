@@ -6,5 +6,6 @@ const router = Router();
 
 router.post("/test", multer, upload, productController.test);
 router.post("/", multer, upload, productController.createProduct);
+router.patch("/:id", productController.updateProduct);
 
 module.exports = router;

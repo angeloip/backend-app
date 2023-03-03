@@ -14,8 +14,21 @@ const productController = {
   createProduct: async (req, res, next) => {
     try {
       console.log(req.body);
-      await fs.remove(req.file.path);
-      return res.status(200).json("OK");
+      if (req.file) {
+        await fs.remove(req.file.path);
+        console.log(req.file);
+      }
+
+      return res.status(200).json("CREATE");
+    } catch (error) {
+      next(error);
+    }
+  },
+  updateProduct: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      console.log(id);
+      return res.status(200).json("UPDATE");
     } catch (error) {
       next(error);
     }
