@@ -6,17 +6,27 @@ v2.config({
   api_secret: process.env.CLOUD_API_SECRET
 });
 
-const uploadImage = async (filePath) => {
+const uploadPictureProduct = async (filePath) => {
+  return await v2.uploader.upload(filePath, {
+    folder: "picture"
+  });
+};
+const deletePictureProduct = async (id) => {
+  return await v2.uploader.destroy(id);
+};
+
+const uploadPictureUser = async (filePath) => {
   return await v2.uploader.upload(filePath, {
     folder: "avatar"
   });
 };
-
-const deleteImage = async (id) => {
+const deletePictureUser = async (id) => {
   return await v2.uploader.destroy(id);
 };
 
 module.exports = {
-  uploadImage,
-  deleteImage
+  uploadPictureProduct,
+  deletePictureProduct,
+  uploadPictureUser,
+  deletePictureUser
 };

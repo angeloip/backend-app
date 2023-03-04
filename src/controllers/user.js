@@ -1,7 +1,10 @@
 const { sendEmailRegister, sendEmailReset } = require("../helpers/sendMail");
 const { activation, refresh, access } = require("../helpers/createToken");
 const { validateEmail } = require("../helpers/validateEmail");
-const { uploadImage, deleteImage } = require("../helpers/cloudinary");
+const {
+  uploadPictureUser,
+  deletePictureUser
+} = require("../helpers/cloudinary");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const fs = require("fs-extra");
@@ -240,7 +243,7 @@ const userController = {
   },
   uploadPicture: async (req, res, next) => {
     try {
-      const result = await uploadImage(req.file.path);
+      const result = await uploadPictureUser(req.file.path);
       await fs.remove(req.file.path);
 
       return res.status(200).json({ msg: "Good Job" });

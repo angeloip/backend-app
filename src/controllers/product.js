@@ -1,5 +1,7 @@
 const { apriori } = require("../helpers/aprori");
 const fs = require("fs-extra");
+const productSchema = require("../schemas/product");
+const { uploadPictureProduct } = require("../helpers/cloudinary");
 
 const productController = {
   test: async (req, res, next) => {
@@ -13,12 +15,20 @@ const productController = {
   },
   createProduct: async (req, res, next) => {
     try {
-      console.log(req.body);
+      const product = req.body;
+
       if (req.file) {
+        const result = await uploadPictureProduct(req.file.path);
         await fs.remove(req.file.path);
-        console.log(req.file);
+        const image = {
+          url: result.secure_url,
+          public_id: result.public_id
+        };
+        product.picture = image;
       }
 
+      const newProduct = new productSchema(product);
+      await newProduct.save();
       return res.status(200).json("CREATE");
     } catch (error) {
       next(error);

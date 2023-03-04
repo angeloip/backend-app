@@ -26,7 +26,7 @@ app.use((error, req, res, next) => {
   console.log("Error name: ", error.name);
   console.log("Error: ", error);
   console.log(error.message);
-  return res.status(500).json({ message: error.message });
+  return res.status(500).json({ msg: error.message });
 });
 
 app.get("/", (req, res) => {
