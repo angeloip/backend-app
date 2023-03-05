@@ -13,6 +13,20 @@ const productController = {
       next(error);
     }
   },
+  getProduct: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const product = await productSchema.findById(id);
+
+      if (!product)
+        return res.status(404).json({ msg: "Producto no existente" });
+
+      return res.status(200).json(product);
+    } catch (error) {
+      next(error);
+    }
+  },
   createProduct: async (req, res, next) => {
     try {
       const product = req.body;
@@ -29,7 +43,7 @@ const productController = {
 
       const newProduct = new productSchema(product);
       await newProduct.save();
-      return res.status(200).json("CREATE");
+      return res.status(200).json("CREATED");
     } catch (error) {
       next(error);
     }
@@ -37,9 +51,22 @@ const productController = {
   updateProduct: async (req, res, next) => {
     try {
       const { id } = req.params;
-      console.log(id);
-      console.log(req.body);
-      return res.status(200).json("UPDATE");
+      const newProductInfo = req.body;
+
+      const product = await productSchema.findById(id);
+
+      if (!product)
+        return res.status(404).json({ msg: "Producto no existente" });
+
+      const updatedProduct = await productSchema.findByIdAndUpdate(
+        id,
+        newProductInfo,
+        {
+          new: true
+        }
+      );
+      console.log(updatedProduct);
+      return res.status(200).json(updatedProduct);
     } catch (error) {
       next(error);
     }

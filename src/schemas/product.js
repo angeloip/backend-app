@@ -25,6 +25,7 @@ const productSchema = new Schema(
 productSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     delete returnedObject.__v;
+    delete returnedObject.updatedAt;
   }
 });
 
