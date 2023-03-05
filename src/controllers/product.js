@@ -1,7 +1,10 @@
 const { apriori } = require("../helpers/aprori");
 const fs = require("fs-extra");
 const productSchema = require("../schemas/product");
-const { uploadPictureProduct } = require("../helpers/cloudinary");
+const {
+  uploadPictureProduct,
+  deletePictureProduct
+} = require("../helpers/cloudinary");
 
 const productController = {
   test: async (req, res, next) => {
@@ -75,6 +78,70 @@ const productController = {
         }
       );
       return res.status(200).json(updatedProduct);
+    } catch (error) {
+      next(error);
+    }
+  },
+  updatePicture: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const product = await productSchema.findById(id);
+
+      if (!product)
+        return res.status(404).json({ msg: "Producto no existente" });
+
+      let image = null;
+
+      if (product.picture.public_id === "") {
+        const result = await uploadPictureProduct(req.file.path);
+        await fs.remove(req.file.path);
+        image = {
+          url: result.secure_url,
+          public_id: result.public_id
+        };
+      } else {
+        await deletePictureProduct(product.picture.public_id);
+        const result = await uploadPictureProduct(req.file.path);
+        await fs.remove(req.file.path);
+        image = {
+          url: result.secure_url,
+          public_id: result.public_id
+        };
+      }
+
+      product.picture.url = image.url;
+      product.picture.public_id = image.public_id;
+
+      const updatedProduct = await productSchema.findByIdAndUpdate(
+        id,
+        product,
+        {
+          new: true
+        }
+      );
+
+      return res.status(200).json(updatedProduct);
+    } catch (error) {
+      next(error);
+    }
+  },
+  deleteProduct: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const product = await productSchema.findById(id);
+
+      if (!product)
+        return res.status(404).json({ msg: "Producto no existente" });
+
+      const deletedProduct = await productSchema.findByIdAndRemove(id);
+
+      if (deletedProduct && deletedProduct.picture.public_id) {
+        await deletePictureProduct(deletedProduct.picture.public_id);
+      }
+
+      return res.status(200).json(deletedProduct);
     } catch (error) {
       next(error);
     }

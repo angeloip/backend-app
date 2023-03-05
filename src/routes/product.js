@@ -9,5 +9,7 @@ router.get("/:id", productController.getProduct);
 router.get("/", productController.getProducts);
 router.post("/", multer, upload, productController.createProduct);
 router.patch("/:id", productController.updateProduct);
+router.patch("/image/:id", multer, upload, productController.updatePicture);
+router.delete("/:id", productController.deleteProduct);
 
 module.exports = router;
