@@ -27,6 +27,15 @@ const productController = {
       next(error);
     }
   },
+  getProducts: async (req, res, next) => {
+    try {
+      const products = await productSchema.find({});
+
+      return res.status(200).json(products);
+    } catch (error) {
+      next(error);
+    }
+  },
   createProduct: async (req, res, next) => {
     try {
       const product = req.body;
@@ -65,7 +74,6 @@ const productController = {
           new: true
         }
       );
-      console.log(updatedProduct);
       return res.status(200).json(updatedProduct);
     } catch (error) {
       next(error);
