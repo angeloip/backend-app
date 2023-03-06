@@ -18,4 +18,4 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-module.exports = upload.single("picture");
+module.exports = upload.single("xlsx");

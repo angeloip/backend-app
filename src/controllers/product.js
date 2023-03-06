@@ -213,6 +213,33 @@ const productController = {
     } catch (error) {
       next(error);
     }
+  },
+  importExcel: async (req, res, next) => {
+    try {
+      const workBook = XLSX.readFile(req.file.path);
+      const workBookSheets = workBook.SheetNames;
+      const sheet = workBookSheets[0];
+      const excelData = XLSX.utils.sheet_to_json(workBook.Sheets[sheet]);
+
+      const data = excelData.map((row) => {
+        const observations = row.Observación.split(", ");
+        return {
+          name: row.Nombre,
+          category: row.Categoría,
+          price: row.Precio,
+          stock: row.Stock,
+          description: row.Descripción,
+          observations
+        };
+      });
+
+      await fs.remove(req.file.path);
+      const importData = await productSchema.insertMany(data);
+
+      return res.status(200).json(importData);
+    } catch (error) {
+      next(error);
+    }
   }
 };
 
