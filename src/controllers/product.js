@@ -201,14 +201,14 @@ const productController = {
 
       res.setHeader(
         "Content-Disposition",
-        'attachment; filename="SheetJSNode.xlsx"'
+        `attachment; filename="Productos.xlsx"`
       );
 
       res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       );
-      console.log("SI");
+
       return res.status(200).send(binaryWorkbook);
     } catch (error) {
       next(error);
