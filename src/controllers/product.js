@@ -147,6 +147,19 @@ const productController = {
       next(error);
     }
   },
+  deleteManyProducts: async (req, res, next) => {
+    try {
+      const ids = req.body;
+
+      await productSchema.deleteMany({
+        _id: { $in: ids }
+      });
+
+      return res.status(200).json("OK");
+    } catch (error) {
+      next(error);
+    }
+  },
   exportExcel: async (req, res, next) => {
     try {
       const products = await productSchema.find(
@@ -192,7 +205,6 @@ const productController = {
       const workSheet = XLSX.utils.aoa_to_sheet(workSheetData);
       const workBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workBook, workSheet, "Productos");
-      /* XLSX.writeFile(workBook, "Productos.xlsx"); */
 
       const binaryWorkbook = XLSX.write(workBook, {
         type: "buffer",
