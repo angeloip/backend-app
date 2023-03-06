@@ -11,5 +11,6 @@ router.post("/", multer, upload, productController.createProduct);
 router.patch("/:id", productController.updateProduct);
 router.patch("/image/:id", multer, upload, productController.updatePicture);
 router.delete("/:id", productController.deleteProduct);
+router.get("/export/excel", productController.exportExcel);
 
 module.exports = router;

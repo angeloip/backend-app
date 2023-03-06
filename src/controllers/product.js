@@ -5,6 +5,7 @@ const {
   uploadPictureProduct,
   deletePictureProduct
 } = require("../helpers/cloudinary");
+const XLSX = require("xlsx");
 
 const productController = {
   test: async (req, res, next) => {
@@ -142,6 +143,73 @@ const productController = {
       }
 
       return res.status(200).json(deletedProduct);
+    } catch (error) {
+      next(error);
+    }
+  },
+  exportExcel: async (req, res, next) => {
+    try {
+      const products = await productSchema.find(
+        {},
+        {
+          name: 1,
+          category: 1,
+          price: 1,
+          stock: 1,
+          description: 1,
+          observations: 1,
+          createdAt: 1
+        }
+      );
+      const workSheetColumnName = [
+        "N°",
+        "Id",
+        "Nombre",
+        "Categoría",
+        "Precio",
+        "Stock",
+        "Descripción",
+        "Observación",
+        "Fecha de Creación"
+      ];
+      const data = products.map((element, index) => {
+        const observations = element.observations.join(", ");
+        const createdAt = new Date(element.createdAt).toLocaleString();
+        return [
+          index + 1,
+          element._id.toString(),
+          element.name,
+          element.category,
+          element.price,
+          element.stock,
+          element.description,
+          observations,
+          createdAt
+        ];
+      });
+
+      const workSheetData = [workSheetColumnName, ...data];
+      const workSheet = XLSX.utils.aoa_to_sheet(workSheetData);
+      const workBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workBook, workSheet, "Productos");
+      /* XLSX.writeFile(workBook, "Productos.xlsx"); */
+
+      const binaryWorkbook = XLSX.write(workBook, {
+        type: "buffer",
+        bookType: "xlsx"
+      });
+
+      res.setHeader(
+        "Content-Disposition",
+        'attachment; filename="SheetJSNode.xlsx"'
+      );
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      console.log("SI");
+      return res.status(200).send(binaryWorkbook);
     } catch (error) {
       next(error);
     }
