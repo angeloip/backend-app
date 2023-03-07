@@ -40,6 +40,39 @@ const productController = {
       next(error);
     }
   },
+  getProductByQuery: async (req, res, next) => {
+    try {
+      const { query } = req.query;
+      const limit = parseInt(req.query.limit, 10) || 2;
+      const page = parseInt(req.query.page, 10) || 1;
+      const skip = (page - 1) * limit;
+
+      const search = query
+        ? {
+            $or: [
+              { name: { $regex: query, $options: "$i" } },
+              { category: { $regex: query, $options: "$i" } },
+              { description: { $regex: query, $options: "$i" } }
+            ]
+          }
+        : {};
+
+      const products = await productSchema.find(search).skip(skip).limit(limit);
+      const productsSize = await productSchema.find(search);
+      /*  const collectionSize = await productSchema.countDocuments({}); */
+
+      return res.status(200).json({
+        data: products,
+        total: productsSize.length,
+        offset: skip,
+        limit: limit,
+        page: page,
+        totalPages: Math.ceil(productsSize.length / limit)
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
   createProduct: async (req, res, next) => {
     try {
       const product = req.body;
