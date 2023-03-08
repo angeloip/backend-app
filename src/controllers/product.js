@@ -57,17 +57,17 @@ const productController = {
           }
         : {};
 
+      const collectionSize = await productSchema.countDocuments(search);
       const products = await productSchema.find(search).skip(skip).limit(limit);
-      const productsSize = await productSchema.find(search);
-      /*  const collectionSize = await productSchema.countDocuments({}); */
+      //const productsSize = await productSchema.find(search);
 
       return res.status(200).json({
-        data: products,
-        total: productsSize.length,
+        docs: products,
+        total: collectionSize,
         offset: skip,
         limit: limit,
         page: page,
-        totalPages: Math.ceil(productsSize.length / limit)
+        totalPages: Math.ceil(collectionSize / limit)
       });
     } catch (error) {
       next(error);
