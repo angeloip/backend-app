@@ -42,7 +42,7 @@ const productController = {
   },
   getProductByQuery: async (req, res, next) => {
     try {
-      const { query } = req.query;
+      const { query, order, key } = req.query;
       const limit = parseInt(req.query.limit, 10) || 10;
       const page = parseInt(req.query.page, 10) || 1;
       const skip = (page - 1) * limit;
@@ -58,7 +58,26 @@ const productController = {
         : {};
 
       const collectionSize = await productSchema.countDocuments(search);
-      const products = await productSchema.find(search).skip(skip).limit(limit);
+      let products = null;
+
+      if (
+        key !== "" &&
+        typeof key !== "undefined" &&
+        order !== "" &&
+        typeof order !== "undefined"
+      ) {
+        if (order === "asc" || order === "desc") {
+          products = await productSchema
+            .find(search)
+            .sort([[key, order]])
+            .skip(skip)
+            .limit(limit);
+        } else {
+          products = await productSchema.find(search).skip(skip).limit(limit);
+        }
+      } else {
+        products = await productSchema.find(search).skip(skip).limit(limit);
+      }
 
       return res.status(200).json({
         docs: products,
