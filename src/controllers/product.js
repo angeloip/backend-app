@@ -107,6 +107,7 @@ const productController = {
 
       const newProduct = new productSchema(product);
       await newProduct.save();
+
       return res.status(200).json("CREATED");
     } catch (error) {
       next(error);
@@ -122,14 +123,11 @@ const productController = {
       if (!product)
         return res.status(404).json({ msg: "Producto no existente" });
 
-      const updatedProduct = await productSchema.findByIdAndUpdate(
-        id,
-        newProductInfo,
-        {
-          new: true
-        }
-      );
-      return res.status(200).json(updatedProduct);
+      await productSchema.findByIdAndUpdate(id, newProductInfo, {
+        new: true
+      });
+
+      return res.status(200).json("UPDATED");
     } catch (error) {
       next(error);
     }
@@ -193,7 +191,7 @@ const productController = {
         await deletePictureProduct(deletedProduct.picture.public_id);
       }
 
-      return res.status(200).json(deletedProduct);
+      return res.status(200).json("DELETED");
     } catch (error) {
       next(error);
     }
