@@ -8,7 +8,7 @@ const router = Router();
 router.post("/test", multer, upload, productController.test);
 router.get("/:id", productController.getProduct);
 router.get("/", productController.getProducts);
-router.post("/search", productController.getProductByQuery);
+router.post("/search", productController.getProductsByQuery);
 router.post("/", multer, upload, productController.createProduct);
 router.patch("/:id", productController.updateProduct);
 router.patch("/image/:id", multer, upload, productController.updatePicture);

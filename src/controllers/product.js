@@ -40,7 +40,7 @@ const productController = {
       next(error);
     }
   },
-  getProductByQuery: async (req, res, next) => {
+  getProductsByQuery: async (req, res, next) => {
     try {
       const { query, order, key } = req.query;
       const limit = parseInt(req.query.limit, 10) || 10;

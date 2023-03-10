@@ -24,6 +24,56 @@ const categoryController = {
       next(error);
     }
   },
+  getCategoriesByQuery: async (req, res, next) => {
+    try {
+      const { query, order, key } = req.query;
+      const limit = parseInt(req.query.limit, 10) || 10;
+      const page = parseInt(req.query.page, 10) || 1;
+      const skip = (page - 1) * limit;
+
+      const search = query
+        ? {
+            $or: [{ name: { $regex: query, $options: "$i" } }]
+          }
+        : {};
+
+      const collectionSize = await categorySchema.countDocuments(search);
+      let categories = null;
+
+      if (
+        key !== "" &&
+        typeof key !== "undefined" &&
+        order !== "" &&
+        typeof order !== "undefined"
+      ) {
+        if (order === "asc" || order === "desc") {
+          categories = await categorySchema
+            .find(search)
+            .sort([[key, order]])
+            .skip(skip)
+            .limit(limit);
+        } else {
+          categories = await categorySchema
+            .find(search)
+            .skip(skip)
+            .limit(limit);
+        }
+      } else {
+        categories = await categorySchema.find(search).skip(skip).limit(limit);
+      }
+
+      return res.status(200).json({
+        docs: categories,
+        total: collectionSize,
+        offset: skip,
+        limit: limit,
+        page: page,
+        totalPages: Math.ceil(collectionSize / limit)
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
   createCategory: async (req, res, next) => {
     try {
       const category = req.body;
