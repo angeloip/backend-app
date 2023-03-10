@@ -97,6 +97,13 @@ const categoryController = {
       if (!category)
         return res.status(404).json({ msg: "Categoría no existente" });
 
+      const product = await productSchema.findOne({ category: category.name });
+
+      if (product)
+        return res.status(406).json({
+          msg: "Se actualizarán todos los datos"
+        });
+
       await categorySchema.findByIdAndUpdate(id, newCategoryInfo, {
         new: true
       });
