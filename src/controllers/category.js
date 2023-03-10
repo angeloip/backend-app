@@ -1,4 +1,5 @@
 const categorySchema = require("../schemas/category");
+const productSchema = require("../schemas/product");
 
 const categoryController = {
   getCategory: async (req, res, next) => {
@@ -113,6 +114,15 @@ const categoryController = {
 
       if (!category)
         return res.status(404).json({ msg: "Categoría no existente" });
+
+      const product = await productSchema.findOne({ category: category.name });
+
+      if (product)
+        return res
+          .status(406)
+          .json({
+            msg: "No es posible eliminar la categoría, ya que existe productos con dicha categoría"
+          });
 
       await categorySchema.findByIdAndRemove(id);
 
