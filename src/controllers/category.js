@@ -118,11 +118,9 @@ const categoryController = {
       const product = await productSchema.findOne({ category: category.name });
 
       if (product)
-        return res
-          .status(406)
-          .json({
-            msg: "No es posible eliminar la categoría, ya que existe productos con dicha categoría"
-          });
+        return res.status(406).json({
+          msg: "No es posible eliminar la categoría, ya que existe productos con dicha categoría"
+        });
 
       await categorySchema.findByIdAndRemove(id);
 
