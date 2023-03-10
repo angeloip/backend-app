@@ -18,7 +18,13 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       default: "user"
-    }
+    },
+    orders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Order"
+      }
+    ]
   },
   {
     timestamps: true
@@ -28,6 +34,7 @@ const userSchema = new Schema(
 userSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     delete returnedObject.__v;
+    delete returnedObject.updatedAt;
     delete returnedObject.password;
   }
 });
