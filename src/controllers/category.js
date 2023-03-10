@@ -99,10 +99,18 @@ const categoryController = {
 
       const product = await productSchema.findOne({ category: category.name });
 
-      if (product)
-        return res.status(406).json({
-          msg: "Se actualizarán todos los datos"
-        });
+      if (product) {
+        await productSchema.updateMany(
+          {
+            category: category.name
+          },
+          {
+            $set: {
+              category: newCategoryInfo.name
+            }
+          }
+        );
+      }
 
       await categorySchema.findByIdAndUpdate(id, newCategoryInfo, {
         new: true

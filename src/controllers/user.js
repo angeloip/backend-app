@@ -151,7 +151,7 @@ const userController = {
       next(error);
     }
   },
-  info: async (req, res, next) => {
+  getUser: async (req, res, next) => {
     try {
       const user = await userSchema.findById(req.user.id).select("-password");
 
@@ -160,7 +160,7 @@ const userController = {
       next(error);
     }
   },
-  update: async (req, res, next) => {
+  updateUser: async (req, res, next) => {
     try {
       const { name, picture } = req.body;
 
@@ -259,6 +259,57 @@ const userController = {
           return res.status(400).json({ msg: "El enlace ya no es válido" });
 
         return res.status(200);
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  getUsersByQuery: async (req, res, next) => {
+    try {
+      const { query, order, key } = req.query;
+      const limit = parseInt(req.query.limit, 10) || 10;
+      const page = parseInt(req.query.page, 10) || 1;
+      const skip = (page - 1) * limit;
+
+      const search = query
+        ? {
+            $or: [
+              { name: { $regex: query, $options: "$i" } },
+              { email: { $regex: query, $options: "$i" } },
+              { mobile: { $regex: query, $options: "$i" } }
+            ]
+          }
+        : {};
+
+      const collectionSize = await userSchema.countDocuments(search);
+      let products = null;
+
+      if (
+        key !== "" &&
+        typeof key !== "undefined" &&
+        order !== "" &&
+        typeof order !== "undefined"
+      ) {
+        if (order === "asc" || order === "desc") {
+          products = await userSchema
+            .find(search)
+            .sort([[key, order]])
+            .skip(skip)
+            .limit(limit);
+        } else {
+          products = await userSchema.find(search).skip(skip).limit(limit);
+        }
+      } else {
+        products = await userSchema.find(search).skip(skip).limit(limit);
+      }
+
+      return res.status(200).json({
+        docs: products,
+        total: collectionSize,
+        offset: skip,
+        limit: limit,
+        page: page,
+        totalPages: Math.ceil(collectionSize / limit)
       });
     } catch (error) {
       next(error);
