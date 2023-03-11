@@ -295,12 +295,21 @@ const userController = {
             .find(search)
             .sort([[key, order]])
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .populate({ path: "orders", select: "-user" });
         } else {
-          products = await userSchema.find(search).skip(skip).limit(limit);
+          products = await userSchema
+            .find(search)
+            .skip(skip)
+            .limit(limit)
+            .populate({ path: "orders", select: "-user" });
         }
       } else {
-        products = await userSchema.find(search).skip(skip).limit(limit);
+        products = await userSchema
+          .find(search)
+          .skip(skip)
+          .limit(limit)
+          .populate({ path: "orders", select: "-user" });
       }
 
       return res.status(200).json({
