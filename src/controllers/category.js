@@ -91,26 +91,12 @@ const categoryController = {
     try {
       const { id } = req.params;
       const newCategoryInfo = req.body;
+      console.log(id, newCategoryInfo);
 
       const category = await categorySchema.findById(id);
 
       if (!category)
         return res.status(404).json({ msg: "Categoría no existente" });
-
-      const product = await productSchema.findOne({ category: category.name });
-
-      if (product) {
-        await productSchema.updateMany(
-          {
-            category: category.name
-          },
-          {
-            $set: {
-              category: newCategoryInfo.name
-            }
-          }
-        );
-      }
 
       await categorySchema.findByIdAndUpdate(id, newCategoryInfo, {
         new: true
@@ -130,12 +116,12 @@ const categoryController = {
       if (!category)
         return res.status(404).json({ msg: "Categoría no existente" });
 
-      const product = await productSchema.findOne({ category: category.name });
+      /* const product = await productSchema.findOne({ category: category.name });
 
       if (product)
         return res.status(406).json({
           msg: "No es posible eliminar la categoría, ya que existe productos con dicha categoría"
-        });
+        }); */
 
       await categorySchema.findByIdAndRemove(id);
 

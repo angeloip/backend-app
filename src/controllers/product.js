@@ -1,6 +1,7 @@
 const { apriori } = require("../helpers/aprori");
 const fs = require("fs-extra");
 const productSchema = require("../schemas/product");
+const categorySchema = require("../schemas/category");
 const {
   uploadPictureProduct,
   deletePictureProduct
@@ -10,9 +11,11 @@ const XLSX = require("xlsx");
 const productController = {
   test: async (req, res, next) => {
     try {
-      const data = req.body;
-      const respuesta = await apriori(data);
-      return res.status(200).json({ msg: JSON.parse(respuesta) });
+      const products = await productSchema
+        .find({}, { picture: 0 })
+        .populate({ path: "category", select: { name: 1 } });
+
+      return res.status(200).json(products);
     } catch (error) {
       next(error);
     }
@@ -41,6 +44,83 @@ const productController = {
     }
   },
   getProductsByQuery: async (req, res, next) => {
+    try {
+      const { query, order, key } = req.query;
+      const limit = parseInt(req.query.limit, 10) || 10;
+      const page = parseInt(req.query.page, 10) || 1;
+      const skip = (page - 1) * limit;
+
+      const validate =
+        key !== "" &&
+        typeof key !== "undefined" &&
+        order !== "" &&
+        typeof order !== "undefined";
+
+      const isCategory = key === "category" ? "category.name" : key;
+
+      const options = validate
+        ? [
+            { $sort: { [isCategory]: order === "asc" ? 1 : -1 } },
+            { $skip: skip },
+            { $limit: limit }
+          ]
+        : [{ $skip: skip }, { $limit: limit }];
+
+      const aggregate = [
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category"
+          }
+        },
+        {
+          $unwind: "$category"
+        },
+        {
+          $match: {
+            $or: [
+              { name: { $regex: query, $options: "$i" } },
+              { "category.name": { $regex: query, $options: "$i" } }
+            ]
+          }
+        },
+
+        {
+          $facet: {
+            docs: [
+              ...options,
+              {
+                $project: {
+                  name: 1,
+                  category: "$category.name",
+                  price: 1,
+                  stock: 1,
+                  description: 1,
+                  observations: 1,
+                  picture: 1,
+                  createdAt: 1
+                }
+              }
+            ],
+            totalCount: [
+              {
+                $count: "count"
+              }
+            ]
+          }
+        }
+      ];
+
+      const products = await productSchema.aggregate(aggregate);
+
+      return res.status(200).json(products);
+    } catch (error) {
+      next(error);
+    }
+  },
+  auxQuery: async (req, res, next) => {
     try {
       const { query, order, key, option } = req.query;
       const limit = parseInt(req.query.limit, 10) || 10;
@@ -94,6 +174,7 @@ const productController = {
   createProduct: async (req, res, next) => {
     try {
       const product = req.body;
+      const { categoryId } = req.body;
 
       if (req.file) {
         const result = await uploadPictureProduct(req.file.path);
@@ -104,6 +185,11 @@ const productController = {
         };
         product.picture = image;
       }
+
+      const category = await categorySchema.findById(categoryId);
+
+      product.category = category._id;
+      delete product.categoryId;
 
       const newProduct = new productSchema(product);
       await newProduct.save();
@@ -211,18 +297,10 @@ const productController = {
   },
   exportExcel: async (req, res, next) => {
     try {
-      const products = await productSchema.find(
-        {},
-        {
-          name: 1,
-          category: 1,
-          price: 1,
-          stock: 1,
-          description: 1,
-          observations: 1,
-          createdAt: 1
-        }
-      );
+      const products = await productSchema
+        .find({}, { picture: 0 })
+        .populate({ path: "category", select: { name: 1 } });
+
       const workSheetColumnName = [
         "N°",
         "Id",
@@ -241,7 +319,7 @@ const productController = {
           index + 1,
           element._id.toString(),
           element.name,
-          element.category,
+          element.category.name,
           element.price,
           element.stock,
           element.description,
@@ -282,11 +360,16 @@ const productController = {
       const sheet = workBookSheets[0];
       const excelData = XLSX.utils.sheet_to_json(workBook.Sheets[sheet]);
 
+      const categories = await categorySchema.find({});
+
       const data = excelData.map((row) => {
         const observations = row.Observación.split(", ");
+        const categoryId = categories.find(
+          (element) => element.name === row.Categoría
+        );
         return {
           name: row.Nombre,
-          category: row.Categoría,
+          category: categoryId,
           price: row.Precio,
           stock: row.Stock,
           description: row.Descripción,

@@ -7,7 +7,7 @@ const orderSchema = new Schema(
     quantities: { type: [Number], required: true, trim: true },
     totalprice: { type: Number, require: true, trim: true },
     state: { type: String, trim: true, default: "Pendiente" },
-    user: { type: Schema.Types.ObjectId, ref: "User" }
+    user: { type: Schema.Types.ObjectId, ref: "User", index: true }
   },
   {
     timestamps: true
