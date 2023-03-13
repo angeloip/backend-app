@@ -10,7 +10,7 @@ const userSchema = new Schema(
       trim: true,
       index: true
     },
-    mobile: { type: String, trim: true, default: "" },
+    mobile: { type: String, trim: true, default: "", index: true },
     picture: {
       url: {
         type: String,

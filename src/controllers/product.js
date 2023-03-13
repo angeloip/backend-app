@@ -24,7 +24,9 @@ const productController = {
     try {
       const { id } = req.params;
 
-      const product = await productSchema.findById(id);
+      const product = await productSchema
+        .findById(id)
+        .populate({ path: "category", select: { name: 1 } });
 
       if (!product)
         return res.status(404).json({ msg: "Producto no existente" });
