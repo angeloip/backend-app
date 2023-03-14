@@ -38,7 +38,9 @@ const productController = {
   },
   getProducts: async (req, res, next) => {
     try {
-      const products = await productSchema.find({});
+      const products = await productSchema
+        .find({})
+        .populate({ path: "category", select: { name: 1 } });
 
       return res.status(200).json(products);
     } catch (error) {
@@ -210,6 +212,15 @@ const productController = {
 
       if (!product)
         return res.status(404).json({ msg: "Producto no existente" });
+
+      const category = await categorySchema.findOne({
+        name: newProductInfo.category
+      });
+
+      if (!category)
+        return res.status(404).json({ msg: "Categoría no existente" });
+
+      newProductInfo.category = category._id;
 
       await productSchema.findByIdAndUpdate(id, newProductInfo, {
         new: true
