@@ -8,6 +8,7 @@ const router = Router();
 router.post("/test", multer, upload, productController.test);
 router.get("/:id", productController.getProduct);
 router.get("/", productController.getProducts);
+router.post("/category", productController.getProductsByCategory);
 router.post("/search", productController.getProductsByQuery);
 router.post("/", multer, upload, productController.createProduct);
 router.patch("/:id", productController.updateProduct);

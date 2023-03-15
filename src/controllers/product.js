@@ -47,6 +47,25 @@ const productController = {
       next(error);
     }
   },
+  getProductsByCategory: async (req, res, next) => {
+    try {
+      console.log(req.body);
+      const category = await categorySchema.findOne({
+        name: req.body.category
+      });
+
+      if (!category)
+        return res.status(404).json({ msg: "Categoría no existente" });
+
+      const products = await productSchema
+        .find({ category: category._id })
+        .populate({ path: "category", select: { name: 1 } });
+
+      return res.status(200).json(products);
+    } catch (error) {
+      next(error);
+    }
+  },
   getProductsByQuery: async (req, res, next) => {
     try {
       const { query, order, key } = req.query;
