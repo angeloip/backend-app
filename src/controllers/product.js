@@ -49,7 +49,6 @@ const productController = {
   },
   getProductsByCategory: async (req, res, next) => {
     try {
-      console.log(req.body);
       const category = await categorySchema.findOne({
         name: req.body.category
       });
