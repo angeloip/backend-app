@@ -153,7 +153,9 @@ const userController = {
   },
   getUser: async (req, res, next) => {
     try {
-      const user = await userSchema.findById(req.user.id).select("-password");
+      const user = await userSchema
+        .findById(req.user.id)
+        .select("-password -__v -updatedAt");
 
       res.status(200).json({ user });
     } catch (error) {
@@ -214,7 +216,7 @@ const userController = {
 
         res.status(200).json({ msg: `Bienvenido ${name}` });
       } else {
-        const password = email + process.env.G_CLIENT_ID;
+        const password = email + Date.now();
         const hashPassword = await bcrypt.hash(password, 5);
         const newUser = new userSchema({
           name,
