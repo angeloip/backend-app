@@ -46,9 +46,16 @@ const userController = {
 
       const newUser = new userSchema({ name, email, password: hashPass });
 
-      await newUser.save();
+      const userData = await newUser.save();
 
-      return res.status(200).json({ msg: "Registrado correctamente" });
+      const rf_token = refresh({ id: userData._id });
+      res.cookie("rftoken", rf_token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+        sameSite: "lax"
+      });
+
+      res.status(200).json({ msg: `Bienvenido ${name}` });
     } catch (error) {
       next(error);
     }
