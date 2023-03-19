@@ -77,7 +77,7 @@ const userController = {
         sameSite: "lax"
       });
 
-      res.status(200).json({ msg: `Bienvenido ${user.name}` });
+      res.status(200).json({ name: user.name, role: user.role });
     } catch (error) {
       next(error);
     }
