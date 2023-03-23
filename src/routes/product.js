@@ -5,7 +5,7 @@ const multerExcel = require("../middlewares/multerExcel");
 const upload = require("../middlewares/upload");
 const router = Router();
 
-router.post("/test", multer, upload, productController.test);
+router.post("/apriori", productController.apriori);
 router.get("/:id", productController.getProduct);
 router.get("/", productController.getProducts);
 router.post("/category", productController.getProductsByCategory);
