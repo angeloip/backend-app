@@ -7,7 +7,7 @@ const {
   uploadPictureProduct,
   deletePictureProduct
 } = require("../helpers/cloudinary");
-const XLSX = require("xlsx");
+const XLSX = require("xlsx-js-style");
 
 const productController = {
   apriori: async (req, res, next) => {
@@ -340,6 +340,18 @@ const productController = {
         "Observación",
         "Fecha de Creación"
       ];
+
+      const workSheetColumnStyle = workSheetColumnName.map((element) => {
+        return {
+          v: element,
+          t: "s",
+          s: {
+            fill: { fgColor: { rgb: "DCE6F1" } },
+            font: { bold: true, sz: 12 }
+          }
+        };
+      });
+
       const data = products.map((element, index) => {
         const observations = element.observations.join(", ");
         const createdAt = new Date(element.createdAt).toLocaleString();
@@ -356,9 +368,21 @@ const productController = {
         ];
       });
 
-      const workSheetData = [workSheetColumnName, ...data];
-      const workSheet = XLSX.utils.aoa_to_sheet(workSheetData);
+      data.unshift(workSheetColumnStyle);
+
+      const fitToColumn = (arrayOfArray) => {
+        return arrayOfArray[0].map((a, i) => ({
+          wch: Math.max(
+            ...arrayOfArray.map((a2) => (a2[i] ? a2[i].toString().length : 0))
+          )
+        }));
+      };
+
+      const columnWidths = fitToColumn(data);
+
+      const workSheet = XLSX.utils.aoa_to_sheet(data);
       const workBook = XLSX.utils.book_new();
+      workSheet["!cols"] = columnWidths;
       XLSX.utils.book_append_sheet(workBook, workSheet, "Productos");
 
       const binaryWorkbook = XLSX.write(workBook, {
