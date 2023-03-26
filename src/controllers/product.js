@@ -330,31 +330,35 @@ const productController = {
         .populate({ path: "category", select: { name: 1 } });
 
       const workSheetColumnName = [
-        "N°",
-        "Id",
-        "Nombre",
-        "Categoría",
-        "Precio",
-        "Stock",
-        "Descripción",
-        "Observación",
-        "Fecha de Creación"
+        [
+          "N°",
+          "Id",
+          "Nombre",
+          "Categoría",
+          "Precio",
+          "Stock",
+          "Descripción",
+          "Observación",
+          "Fecha de Creación"
+        ]
       ];
 
-      const workSheetColumnStyle = workSheetColumnName.map((element) => {
-        return {
-          v: element,
-          t: "s",
-          s: {
-            fill: { fgColor: { rgb: "DCE6F1" } },
-            font: { bold: true, sz: 12 }
-          }
-        };
-      });
+      const workSheetColumnStyle = [
+        workSheetColumnName[0].map((element) => {
+          return {
+            v: element,
+            t: "s",
+            s: {
+              fill: { fgColor: { rgb: "DCE6F1" } },
+              font: { bold: true, sz: 12 }
+            }
+          };
+        })
+      ];
 
       const data = products.map((element, index) => {
         const observations = element.observations.join(", ");
-        const createdAt = new Date(element.createdAt).toLocaleString();
+        const createdAt = new Date(element.createdAt).toLocaleString("en-AU");
         return [
           index + 1,
           element._id.toString(),
@@ -368,7 +372,7 @@ const productController = {
         ];
       });
 
-      data.unshift(workSheetColumnStyle);
+      const dataset = workSheetColumnStyle.concat(data);
 
       const fitToColumn = (arrayOfArray) => {
         return arrayOfArray[0].map((a, i) => ({
@@ -378,9 +382,9 @@ const productController = {
         }));
       };
 
-      const columnWidths = fitToColumn(data);
+      const columnWidths = fitToColumn(dataset);
 
-      const workSheet = XLSX.utils.aoa_to_sheet(data);
+      const workSheet = XLSX.utils.aoa_to_sheet(dataset);
       const workBook = XLSX.utils.book_new();
       workSheet["!cols"] = columnWidths;
       XLSX.utils.book_append_sheet(workBook, workSheet, "Productos");
