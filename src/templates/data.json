@@ -1,0 +1,63 @@
+{
+    "products": [
+        {
+            "picture": {
+                "url": "https://res.cloudinary.com/dzgiu2txq/image/upload/v1679690555/picture/yrgiaut2loe9yscaxhia.jpg",
+                "public_id": "picture/yrgiaut2loe9yscaxhia"
+            },
+            "_id": "640f3713f320b8dbdf67276f",
+            "name": "Test1",
+            "category": {
+                "_id": "640b3e5932a69147ab1b631a",
+                "name": "Mamá y Bebé"
+            },
+            "price": 21.26,
+            "stock": 92,
+            "description": "ud magna in elit ma",
+            "observations": [
+                "123",
+                "aaaaa",
+                "aa5b"
+            ],
+            "createdAt": "2023-03-13T14:45:39.711Z"
+        },
+        {
+            "picture": {
+                "url": "https://res.cloudinary.com/dzgiu2txq/image/upload/v1677945017/picture/no-image_abom6f.jpg",
+                "public_id": ""
+            },
+            "_id": "640f3713f320b8dbdf672770",
+            "name": "Test2",
+            "category": {
+                "_id": "640a7b94130ada8b42e8622a",
+                "name": "Salud"
+            },
+            "price": 58.11,
+            "stock": 93,
+            "description": "rqwe edew",
+            "observations": [
+                "123"
+            ],
+            "createdAt": "2023-03-13T14:45:39.711Z"
+        },
+        {
+            "picture": {
+                "url": "https://res.cloudinary.com/dzgiu2txq/image/upload/v1677945017/picture/no-image_abom6f.jpg",
+                "public_id": ""
+            },
+            "_id": "640f3713f320b8dbdf672771",
+            "name": "Test3",
+            "category": {
+                "_id": "640a7b94130ada8b42e8622a",
+                "name": "Salud"
+            },
+            "price": 16.32,
+            "stock": 78,
+            "description": "yds weq",
+            "observations": [
+                "awe",
+                "awe",
+                "awewe"
+            ],
+            "createdAt": "2023-03-13T14:45:39.711Z"
+        }]}

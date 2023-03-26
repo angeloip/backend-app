@@ -8,6 +8,9 @@ const {
   deletePictureProduct
 } = require("../helpers/cloudinary");
 const XLSX = require("xlsx-js-style");
+const path = require("path");
+const puppeteer = require("puppeteer");
+const hbs = require("handlebars");
 
 const productController = {
   apriori: async (req, res, next) => {
@@ -395,11 +398,6 @@ const productController = {
       });
 
       res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="Productos.xlsx"`
-      );
-
-      res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       );
@@ -437,6 +435,55 @@ const productController = {
       const importData = await productSchema.insertMany(data);
 
       return res.status(200).json(importData);
+    } catch (error) {
+      next(error);
+    }
+  },
+  generateReport: async (req, res, next) => {
+    try {
+      const products = await productSchema
+        .find({}, { picture: 0 })
+        .populate({ path: "category", select: { name: 1 } });
+
+      const data = products.map((element) => {
+        const observations = element.observations.join(", ");
+        const createdAt = new Date(element.createdAt).toLocaleString("en-AU");
+        return {
+          id: element._id.toString(),
+          name: element.name,
+          category: element.category.name,
+          price: element.price,
+          stock: element.stock,
+          description: element.description,
+          observations,
+          createdAt
+        };
+      });
+
+      const filePath = path.join(
+        process.cwd(),
+        "src",
+        "templates",
+        "report.hbs"
+      );
+
+      const html = await fs.readFile(filePath, "utf-8");
+      const template = hbs.compile(html)({ products: data });
+
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+
+      await page.setContent(template);
+
+      await page.pdf({
+        path: "mypdf.pdf",
+        format: "A4",
+        printBackground: true
+      });
+
+      await browser.close();
+
+      return res.status(200).json("Ok");
     } catch (error) {
       next(error);
     }

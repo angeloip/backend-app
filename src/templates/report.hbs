@@ -1,0 +1,45 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      p{ background-color: yellow; } ul{ list-style: none; }, table{
+      border-collapse: collapse; width: 100%;}
+    </style>
+  </head>
+  <body>
+    <p>Hello
+
+    </p>
+    <main>
+      <table>
+        <thead><tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Descripción</th>
+            <th>Observación</th>
+            <th>Fecha de Creación</th>
+          </tr></thead>
+        <tbody>
+          {{#each products as |product|}}
+            <tr>
+              <td>{{product.id}}</td>
+              <td>{{product.name}}</td>
+              <td>{{product.category}}</td>
+              <td>{{product.price}}</td>
+              <td>{{product.stock}}</td>
+              <td>{{product.description}}</td>
+              <td>{{product.observations}}</td>
+              <td>{{product.createdAt}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
