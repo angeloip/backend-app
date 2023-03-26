@@ -442,12 +442,11 @@ const productController = {
   generateReport: async (req, res, next) => {
     try {
       const products = await productSchema
-        .find({}, { picture: 0 })
+        .find({}, { picture: 0, createdAt: 0 })
         .populate({ path: "category", select: { name: 1 } });
 
       const data = products.map((element) => {
         const observations = element.observations.join(", ");
-        const createdAt = new Date(element.createdAt).toLocaleString("en-AU");
         return {
           id: element._id.toString(),
           name: element.name,
@@ -455,8 +454,7 @@ const productController = {
           price: element.price,
           stock: element.stock,
           description: element.description,
-          observations,
-          createdAt
+          observations
         };
       });
 
@@ -470,23 +468,42 @@ const productController = {
       const html = await fs.readFile(filePath, "utf-8");
       const template = hbs.compile(html)({ products: data });
 
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage"
+        ]
+      });
       const page = await browser.newPage();
 
-      await page.setContent(template);
+      await page.setContent(template, { waitUntil: "domcontentloaded" });
+      await page.emulateMediaType("screen");
 
-      await page.pdf({
-        path: "mypdf.pdf",
+      const header =
+        '<div class="header" style="padding: 0 !important; margin: 0; -webkit-print-color-adjust: exact; background-color: red; color: white; width: 100%; height: 40px; text-align: left; font-size: 12px;">header of Juan<br /> Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>';
+      const footer =
+        '<style>#header, #footer { padding: 0 !important; }</style><div class="footer" style="padding: 0 10px; margin: 0; -webkit-print-color-adjust: exact; display: flex; align-items: center; justify-content: flex-end; background-color: transparent; width: 100%; height: 30px; text-align: right; font-size: 12px;"><div style="color: gray; font-size: 10px"><span class="pageNumber"></span> / <span class="totalPages"></span></div></div>';
+
+      const pdf = await page.pdf({
+        displayHeaderFooter: true,
+        headerTemplate: header,
+        footerTemplate: footer,
         format: "A4",
-        printBackground: true
+        printBackground: true,
+        margin: {
+          top: "60px",
+          bottom: "40px"
+        }
       });
 
       await browser.close();
 
-      return res.status(200).json("Ok");
-    } catch (error) {
-      next(error);
-    }
+      res.contentType("application/pdf");
+
+      return res.status(200).send(pdf);
+    } catch (error) {}
   }
 };
 

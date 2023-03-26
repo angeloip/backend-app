@@ -3,43 +3,58 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Reporte</title>
     <style>
-      p{ background-color: yellow; } ul{ list-style: none; }, table{
-      border-collapse: collapse; width: 100%;}
+      body{ font-family: 'Inter', sans-serif;} .table{background-color: #fff5;
+      backdrop-filter: blur(7px); box-shadow: 0 .4rem .8rem #0005;
+      border-radius: 5px;} .tableHeader{ background-color: #fff4; padding: 8px
+      0; } .title{ text-align: center; font-weight: 500; } .tableBody{
+      background-color: #fffb; border-radius: 5px;} table{ border-collapse:
+      collapse; width: 100%;} td, th{border-collapse: collapse; padding: 5px
+      5px; border: none;} thead th{ background-color: #d5d1defe; } tbody
+      tr:nth-child(even) { background-color: #0000000b; }
     </style>
   </head>
   <body>
-    <p>Hello
-
-    </p>
-    <main>
-      <table>
-        <thead><tr>
-            <th>Id</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Descripción</th>
-            <th>Observación</th>
-            <th>Fecha de Creación</th>
-          </tr></thead>
-        <tbody>
-          {{#each products as |product|}}
+    <main class="table">
+      <section class="tableHeader">
+        <div class="title">Reporte de Productos</div>
+      </section>
+      <section class="tableBody">
+        <table>
+          <thead>
             <tr>
-              <td>{{product.id}}</td>
-              <td>{{product.name}}</td>
-              <td>{{product.category}}</td>
-              <td>{{product.price}}</td>
-              <td>{{product.stock}}</td>
-              <td>{{product.description}}</td>
-              <td>{{product.observations}}</td>
-              <td>{{product.createdAt}}</td>
+              <th>Id</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Descripción</th>
+              <th>Observación</th>
             </tr>
-          {{/each}}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {{#each products as |product|}}
+              <tr>
+                <td>{{product.id}}</td>
+                <td>{{product.name}}</td>
+                <td>{{product.category}}</td>
+                <td>{{product.price}}</td>
+                <td>{{product.stock}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.observations}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </section>
+
     </main>
   </body>
 </html>

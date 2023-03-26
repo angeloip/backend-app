@@ -34,6 +34,6 @@ router.post(
   upload,
   productController.importExcel
 );
-router.post("/generate/report", productController.generateReport);
+router.get("/generate/report", checkAuth, productController.generateReport);
 
 module.exports = router;
