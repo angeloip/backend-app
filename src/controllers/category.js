@@ -25,6 +25,41 @@ const categoryController = {
       next(error);
     }
   },
+  getCountByCategory: async (req, res, next) => {
+    try {
+      const aggregate = [
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category"
+          }
+        },
+        {
+          $unwind: "$category"
+        },
+        {
+          $group: {
+            _id: "$category",
+            count: { $sum: 1 },
+            name: { $first: "$category.name" }
+          }
+        },
+        { $project: { _id: 0 } }
+      ];
+
+      const countPerCategory = await productSchema.aggregate(aggregate);
+      const sortData = countPerCategory.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+
+      return res.status(200).json(sortData);
+    } catch (error) {
+      next(error);
+    }
+    y;
+  },
   getCategoriesByQuery: async (req, res, next) => {
     try {
       const { query, order, key } = req.query;

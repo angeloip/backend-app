@@ -5,6 +5,7 @@ const router = Router();
 
 router.get("/:id", categoryController.getCategory);
 router.get("/", categoryController.getCategories);
+router.get("/count/category", categoryController.getCountByCategory);
 router.post("/search", categoryController.getCategoriesByQuery);
 router.post("/", checkAuth, categoryController.createCategory);
 router.patch("/:id", checkAuth, categoryController.updateCategory);
