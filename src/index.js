@@ -16,15 +16,9 @@ app.use(cookieParser());
 
 require("./connection");
 
-const userRoute = require("./routes/user");
-const productRoute = require("./routes/product");
-const categoryRoute = require("./routes/category");
-const orderRoute = require("./routes/order");
+const router = require("./routes")
+app.use(router)
 
-app.use("/api/user", userRoute);
-app.use("/api/product", productRoute);
-app.use("/api/category", categoryRoute);
-app.use("/api/order", orderRoute);
 
 app.use((error, req, res, next) => {
   console.log("Error name: ", error.name);
