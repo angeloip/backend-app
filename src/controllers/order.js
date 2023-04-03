@@ -107,6 +107,9 @@ const orderController = {
 
       const user = await userSchema.findById(userId);
 
+      if (!user)
+        return res.status(404).json({ msg: "Usuario no autenticado" });
+
       order.user = user._id;
       delete order.userId;
 
